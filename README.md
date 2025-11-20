@@ -266,76 +266,453 @@ El estado global se maneja con React Context (`AppContext`) que provee:
 
 ---
 
+## 📊 Estado Actual de Funcionalidades
+
+### ✅ Funcionalidades Implementadas (MVP v1.0)
+
+#### Sistema de Reservas
+- ✅ Calendario visual diario con vista por hora
+- ✅ Creación manual de reservas desde panel
+- ✅ Selección de cliente, duración y estado
+- ✅ Agregar servicios adicionales (paletas, quincho, pelotas, árbitro)
+- ✅ Cálculo automático de precio total
+- ✅ Validación de ocupación (sin superposiciones)
+- ✅ Estados de reserva: Pendiente, Confirmada, Pagada, Cancelada, No-Show
+- ✅ Códigos de color por estado
+
+#### Dashboard con IA
+- ✅ 4 KPIs principales: Ingresos, Reservas Activas, Clientes, Ocupación
+- ✅ Gráfico de actividad semanal (BarChart)
+- ✅ Gráfico de ingresos por deporte (PieChart)
+- ✅ Integración con Gemini AI para insights inteligentes
+- ✅ Selector de sede actual
+
+#### Gestión Multi-Sede
+- ✅ 2 sedes configuradas
+- ✅ Selector de sede en Dashboard
+- ✅ Filtrado de canchas por sede
+
+#### Gestión de Canchas
+- ✅ Listado de canchas por sede
+- ✅ Información: nombre, deporte, superficie, precio/hora
+- ✅ Visualización con emojis por deporte
+- ✅ Estados: techada/descubierta
+
+#### Torneos y Fixtures
+- ✅ Listado de torneos (Activos/Finalizados)
+- ✅ Información: formato, fechas, equipos, premios
+- ✅ Gestión de fixtures y partidos
+- ✅ Edición de resultados (scores)
+- ✅ Indicadores visuales de partidos completados
+
+#### Escuelas Deportivas
+- ✅ Listado de clases por deporte
+- ✅ Información: instructor, nivel, horario, cupos
+- ✅ Barra de progreso de inscripciones
+- ✅ Indicador de clase completa
+
+#### Navegación y UI
+- ✅ Layout responsive con sidebar
+- ✅ 8 secciones de navegación
+- ✅ Menú hamburguesa para móviles
+- ✅ Sistema de iconos con Lucide React
+- ✅ Animaciones y transiciones
+
+### ⚠️ Limitaciones Actuales
+
+#### Persistencia
+- ❌ **Datos MOCK en memoria** (se pierden al refrescar)
+- ❌ Sin base de datos real
+- ❌ Sin sistema de backups
+
+#### Autenticación
+- ❌ Sin login/signup
+- ❌ Sin roles ni permisos
+- ❌ Sin multi-tenancy
+- ❌ Acceso abierto a todas las funcionalidades
+
+#### CRUD Incompleto
+- ❌ No se pueden crear/editar/eliminar canchas
+- ❌ No se pueden crear/editar torneos
+- ❌ No se pueden crear/editar clases
+- ❌ No se pueden editar/cancelar reservas existentes
+- ❌ No se pueden gestionar clientes ni servicios
+
+#### Widget Público
+- ⚠️ Página de preview implementada
+- ❌ Widget embebible NO funcional
+- ❌ Sin reservas online desde exterior
+
+#### Automatizaciones
+- ❌ Sin notificaciones automáticas
+- ❌ Sin recordatorios
+- ❌ Sin integración con WhatsApp/Email/SMS
+- ❌ Sin chatbot
+
+#### Pagos
+- ❌ Sin integración con pasarelas
+- ❌ Sin facturación electrónica
+- ❌ Solo registro manual de pagos
+
+---
+
 ## 🗺️ Roadmap
 
-### ✅ Fase 1: MVP (Actual)
-- [x] Dashboard con métricas básicas
-- [x] Sistema de reservas con calendario
-- [x] Gestión multi-sede
-- [x] Módulo de torneos
-- [x] Módulo de escuelas deportivas
-- [x] Integración con Gemini AI
+### ✅ Fase 1: MVP (Completado - v1.0)
+- [x] Dashboard con métricas básicas e integración IA
+- [x] Sistema de reservas con calendario visual
+- [x] Gestión multi-sede básica
+- [x] Módulo de torneos (visualización y resultados)
+- [x] Módulo de escuelas deportivas (visualización)
+- [x] UI/UX completa y responsive
 
-### 🚧 Fase 2: Automatización (Q2 2025)
-- [ ] **Sistema de recordatorios automáticos** (24h y 2h antes)
-  - Integración con WhatsApp Business API
-  - Email transaccional con SendGrid/Resend
-  - SMS para confirmaciones urgentes
-- [ ] **Chatbot con IA 24/7**
-  - Responde consultas sobre horarios, precios, disponibilidad
-  - Toma reservas automáticamente
-  - Escalamiento inteligente a humano
-  - Multicanal (WhatsApp, Instagram, Facebook, Web)
-- [ ] **Gestión de no-shows**
-  - Re-confirmación automática 2 horas antes
-  - Lista de espera automática
-  - Sistema de penalización configurable
+**Estado**: ✅ Listo para DEMO | ❌ NO listo para PRODUCCIÓN
+
+---
+
+### 🚧 Fase 2: Fundamentos de Producción (Q2 2025)
+
+#### 2.1 Migración a Stack Escalable
+- [ ] **Migración a Next.js 14+**
+  - SSR y ISR para performance
+  - API Routes para backend
+  - Middleware para protección de rutas
 - [ ] **Base de datos persistente**
-  - Migración a PostgreSQL/Supabase
-  - Sistema de backups automáticos
+  - PostgreSQL con Supabase
+  - Prisma ORM
+  - Sistema de migraciones
+  - Backups automáticos diarios
 - [ ] **Autenticación y autorización**
-  - Login con Clerk/NextAuth
-  - Roles: Admin, Manager, Instructor, Cliente
-  - Multi-tenancy para múltiples clubes
+  - Login/Signup con Clerk o NextAuth
+  - Roles: Super Admin, Admin, Manager, Instructor, Cliente
+  - Multi-tenancy (un club = un tenant)
+  - Protección de rutas por rol
 
-### 🔮 Fase 3: Inteligencia y Escala (Q3 2025)
-- [ ] **Hub de marketing automático**
-  - Generación de contenido para redes con GPT
-  - Publicación automática en Instagram, Facebook
-  - Campañas de email/WhatsApp segmentadas
+#### 2.2 CRUD Completo
+- [ ] **Gestión de Canchas**
+  - Crear, editar, eliminar canchas
+  - Configurar horarios de disponibilidad
+  - Bloquear slots por mantenimiento
+  - Asignar responsables por cancha
+- [ ] **Gestión de Clientes**
+  - CRUD completo de clientes
+  - Historial de reservas por cliente
+  - Sistema de etiquetas avanzado
+  - Notas internas y seguimiento
+- [ ] **Gestión de Servicios Adicionales**
+  - CRUD de servicios
+  - Configuración de precios
+  - Disponibilidad por sede
+  - Control de inventario básico
+- [ ] **Sistema de Reservas Completo**
+  - Editar reservas existentes
+  - Cancelar reservas con políticas
+  - Drag & drop para reagendar
+  - Vista semanal y mensual
+  - Filtros avanzados
+
+#### 2.3 Widget Público de Reservas
+- [ ] **Widget embebible funcional**
+  - Iframe responsive
+  - Disponibilidad en tiempo real
+  - Formulario de reserva
+  - Captura de datos de contacto
+  - Verificación de disponibilidad
+- [ ] **Personalización del widget**
+  - Colores del club
+  - Logo personalizado
+  - Textos configurables
+
+---
+
+### 🤖 Fase 3: Automatización e IA (Q3 2025)
+
+#### 3.1 Sistema de Notificaciones
+- [ ] **Recordatorios automáticos**
+  - 24 horas antes de la reserva
+  - 2 horas antes (re-confirmación)
+  - Confirmación al crear reserva
+- [ ] **Canales de comunicación**
+  - Email transaccional (SendGrid/Resend)
+  - WhatsApp Business API
+  - SMS para urgencias (Twilio)
+- [ ] **Plantillas personalizables**
+  - Editor de mensajes
+  - Variables dinámicas
+  - A/B testing
+
+#### 3.2 Chatbot con IA 24/7
+- [ ] **Funcionalidades del bot**
+  - Consultas sobre horarios y disponibilidad
+  - Toma de reservas automática
+  - Consultas de precios
+  - Escalamiento inteligente a humano
+- [ ] **Canales soportados**
+  - WhatsApp
+  - Instagram DM
+  - Facebook Messenger
+  - Widget web
+- [ ] **Entrenamiento con IA**
+  - Base de conocimiento del club
+  - Aprendizaje de conversaciones
+  - Análisis de sentimiento
+
+#### 3.3 Gestión de No-Shows
+- [ ] Re-confirmación automática 2h antes
+- [ ] Lista de espera automática
+- [ ] Sistema de penalización configurable
+- [ ] Alertas a administradores
+- [ ] Estadísticas de no-show por cliente
+
+#### 3.4 Hub de Marketing Automático
+- [ ] **Generación de contenido con IA**
+  - Posts para Instagram/Facebook
+  - Copys para promociones
+  - Hashtags inteligentes
+- [ ] **Publicación automática**
+  - Buffer/Hootsuite integration
+  - Scheduling inteligente
+  - Analytics de engagement
+- [ ] **Campañas segmentadas**
+  - Email marketing por segmento
+  - WhatsApp bulk (con opt-in)
   - Promociones flash en horarios valle
-- [ ] **Sistema de fidelización**
-  - Programa de puntos personalizable
-  - Recompensas y cupones automáticos
-  - Detección de clientes en riesgo de abandono
-  - Campañas de reactivación
-- [ ] **Predicción de demanda con ML**
-  - Precios dinámicos según ocupación
-  - Sugerencias de promociones inteligentes
-  - Forecast de ingresos mensuales
-- [ ] **App móvil nativa**
-  - React Native / Flutter
-  - Notificaciones push
-  - Check-in con QR
 
-### 🌟 Fase 4: Ecosistema Completo (Q4 2025)
-- [ ] **Gestión de inventario con IA**
-  - Control de equipamiento y consumibles
+---
+
+### 🚀 Fase 4: Inteligencia y Fidelización (Q4 2025)
+
+#### 4.1 Sistema de Fidelización
+- [ ] **Programa de puntos**
+  - Acumulación por reservas
+  - Puntos por monto gastado
+  - Niveles: Bronce, Plata, Oro, Platinum
+- [ ] **Recompensas**
+  - Descuentos por puntos
+  - Reservas gratis
+  - Upgrades de cancha
+  - Servicios premium sin cargo
+- [ ] **Gamificación**
+  - Logros y badges
+  - Tabla de líderes
+  - Desafíos mensuales
+- [ ] **Detección de abandono**
+  - IA predice clientes en riesgo
+  - Campañas de reactivación automáticas
+  - Ofertas personalizadas
+
+#### 4.2 Predicción de Demanda con ML
+- [ ] **Precios dinámicos**
+  - Ajuste automático según ocupación
+  - Análisis de elasticidad de precios
+  - Promociones inteligentes en horarios valle
+- [ ] **Forecast de ingresos**
+  - Predicción mensual/anual
+  - Simulaciones de escenarios
+  - Alertas de desviaciones
+- [ ] **Recomendaciones personalizadas**
+  - Horarios sugeridos por cliente
+  - Cross-selling de servicios
+  - Upselling inteligente
+
+#### 4.3 App Móvil Nativa
+- [ ] **React Native / Flutter**
+  - iOS y Android
+  - Diseño nativo por plataforma
+- [ ] **Funcionalidades clave**
+  - Reservas rápidas
+  - Check-in con QR
+  - Notificaciones push
+  - Wallet de puntos de fidelización
+  - Chat con soporte
+- [ ] **Offline-first**
+  - Funcionalidad básica sin internet
+  - Sincronización automática
+
+---
+
+### 🌟 Fase 5: Ecosistema Completo (2026)
+
+#### 5.1 Sistema de Pagos Integrado
+- [ ] **Pasarelas de pago**
+  - MercadoPago (LATAM)
+  - Stripe (Global)
+  - PayPal
+- [ ] **Tipos de pago**
+  - Pago completo online
+  - Señas + saldo
+  - Pagos recurrentes (suscripciones)
+- [ ] **Facturación electrónica**
+  - Integración con AFIP (Argentina)
+  - Facturas automáticas
+  - Gestión de mora
+  - Recordatorios de pago
+
+#### 5.2 Control de Acceso Inteligente
+- [ ] **Check-in con QR**
+  - Generación de códigos por reserva
+  - Validación en tiempo real
+  - Control de horarios
+- [ ] **Integración con torniquetes**
+  - API para hardware de acceso
+  - Control biométrico (facial/huella)
+  - Registro de ingresos/egresos
+- [ ] **Alertas de seguridad**
+  - Accesos no autorizados
+  - Exceso de capacidad
+  - Permanencia prolongada
+
+#### 5.3 Gestión de Inventario y Equipamiento
+- [ ] **Alquiler de equipamiento**
+  - Paletas, raquetas, pelotas
+  - Chalecos, conos, arcos
+  - Sistema de préstamo/devolución
+  - Facturación automática
+- [ ] **Control de stock**
+  - Inventario en tiempo real
   - Alertas de stock bajo
   - Órdenes de compra automáticas
-- [ ] **Sistema de turnos para empleados**
+  - Proveedores integrados
+- [ ] **Vestuarios y Lockers**
+  - Asignación automática de lockers
+  - Códigos QR para acceso
+  - Gestión de limpieza
+  - Reserva de duchas premium
+
+#### 5.4 Gestión de Empleados
+- [ ] **Sistema de turnos**
   - Generación automática de horarios
+  - Turnos rotativos
+  - Swap de turnos entre empleados
+- [ ] **Control de asistencia**
   - Check-in con geolocalización
-  - Cálculo de horas y liquidación
-- [ ] **Plataforma de análisis de reputación**
-  - Monitoreo de reviews en tiempo real
-  - Análisis de sentimiento con IA
+  - Registro de horas trabajadas
+  - Horas extras automáticas
+- [ ] **Liquidaciones**
+  - Cálculo de sueldos
+  - Descuentos y bonos
+  - Integración con contabilidad
+- [ ] **Evaluaciones**
+  - Performance reviews
+  - Feedback de clientes
+  - Capacitaciones requeridas
+
+#### 5.5 Suscripciones y Membresías
+- [ ] **Planes de suscripción**
+  - Mensual, trimestral, anual
+  - Descuentos por volumen
+  - Acceso preferencial en pico
+- [ ] **Beneficios por nivel**
+  - Socios básicos, premium, VIP
+  - Cancelación sin cargo
+  - Invitados sin cargo
+- [ ] **Gestión automática**
+  - Renovación automática
+  - Alertas de vencimiento
+  - Cobro recurrente
+
+#### 5.6 Mantenimiento Predictivo
+- [ ] **Calendario de mantenimiento**
+  - Preventivo programado
+  - Correctivo por incidencias
+  - Historial completo por cancha
+- [ ] **Alertas inteligentes**
+  - Detección de deterioro
+  - Predicción de vida útil
+  - Priorización de reparaciones
+- [ ] **Gestión de proveedores**
+  - Base de datos de proveedores
+  - Cotizaciones automáticas
+  - Evaluación de servicios
+
+#### 5.7 Sistema de Reviews y Reputación
+- [ ] **Evaluaciones de clientes**
+  - Calificar canchas, instructores, servicios
+  - Reviews públicas y privadas
+  - Fotos y videos
+- [ ] **Análisis con IA**
+  - Análisis de sentimiento
+  - Detección de problemas recurrentes
   - Respuestas sugeridas automáticas
+- [ ] **Reputación online**
+  - Monitoreo de Google Reviews
+  - Integración con TripAdvisor
   - Benchmarking vs. competencia
-- [ ] **Marketplace de servicios**
-  - Tienda online de productos del club
-  - Contratación de servicios profesionales (fisio, nutrición)
-  - Sistema de referidos
+  - Dashboard de NPS (Net Promoter Score)
+
+#### 5.8 Eventos Especiales y Corporativos
+- [ ] **Organización de eventos**
+  - Campeonatos y ligas
+  - Clínicas con profesionales
+  - Eventos corporativos
+  - Fiestas y celebraciones
+- [ ] **Gestión completa**
+  - Inscripción online
+  - Pagos grupales
+  - Catering integrado
+  - Fotografía y video
+- [ ] **Marketing de eventos**
+  - Landing pages automáticas
+  - Email marketing
+  - Venta de entradas online
+
+#### 5.9 Sistema de Referidos
+- [ ] **Programa "Trae un Amigo"**
+  - Código único por cliente
+  - Bonos para referidor y referido
+  - Tracking de conversión
+- [ ] **Incentivos escalables**
+  - 1 amigo = 10% descuento
+  - 5 amigos = 1 reserva gratis
+  - 10 amigos = membresía gratis
+- [ ] **Gamificación**
+  - Tabla de mejores referidores
+  - Premios mensuales
+  - Competencias entre socios
+
+#### 5.10 Marketplace de Servicios
+- [ ] **Tienda online**
+  - Productos del club (merchandising)
+  - Equipamiento deportivo
+  - Bebidas y snacks
+  - Reserva de productos
+- [ ] **Servicios profesionales**
+  - Fisioterapeutas
+  - Nutricionistas
+  - Entrenadores personales
+  - Masajes deportivos
+- [ ] **Comisión por venta**
+  - Modelo de marketplace
+  - Pagos automáticos a proveedores
+  - Facturación integrada
+
+---
+
+## 🆕 Funcionalidades Innovadoras (Roadmap Extendido)
+
+### Análisis Avanzado con IA
+- **Predicción de lesiones**: Análisis de patrones de juego
+- **Optimización de superficies**: Recomendaciones por deporte
+- **Análisis de video**: Grabación automática de partidos con resumen IA
+- **Coaching virtual**: Sugerencias técnicas post-partido
+
+### Integración con Wearables
+- **Dispositivos deportivos**: Garmin, Fitbit, Apple Watch
+- **Métricas en vivo**: Frecuencia cardíaca, calorías, pasos
+- **Desafíos de fitness**: Competencias entre socios
+- **Historial de rendimiento**: Evolución personal
+
+### Sostenibilidad
+- **Medición de huella de carbono**: Por reserva, por cliente
+- **Energías renovables**: Panel solar tracking
+- **Programa de reciclaje**: Incentivos por pelotas/paletas viejas
+- **Compensación de CO2**: Plantación de árboles por reserva
+
+### Blockchain y NFTs (Exploratorio)
+- **Tokens de fidelización**: Recompensas en blockchain
+- **NFTs de logros**: Coleccionables digitales por torneos
+- **Smart contracts**: Reservas descentralizadas
+- **Pagos crypto**: Bitcoin, Ethereum, stablecoins
 
 ---
 

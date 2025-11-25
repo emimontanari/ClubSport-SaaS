@@ -13,34 +13,89 @@ export const Dashboard: React.FC = () => {
   const [aiInsights, setAiInsights] = useState<string | null>(null);
   const [isLoadingAi, setIsLoadingAi] = useState(false);
 
+  // Filter courts for current venue
+  const venueCourts = courts.filter(c => c.venueId === currentVenue.id);
+
   // Calculate Stats
   const totalRevenue = bookings.reduce((acc, b) => acc + b.totalPrice, 0);
   const activeBookings = bookings.filter(b => b.status === 'Confirmada' || b.status === 'Pagada').length;
-  
-  // Revenue by Sport (Mock logic for chart)
+
+  // Calculate real occupancy rate
+  const calculateOccupancyRate = () => {
+    // Calculate total available hours per week (7 days)
+    const hoursPerDay = currentVenue.closesAt - currentVenue.opensAt;
+    const totalAvailableHours = venueCourts.length * hoursPerDay * 7;
+
+    if (totalAvailableHours === 0) return 0;
+
+    // Calculate booked hours from all bookings (filter last 7 days)
+    const today = new Date();
+    const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+    const recentBookings = bookings.filter(b => {
+      const bookingDate = new Date(b.date);
+      const court = courts.find(c => c.id === b.courtId);
+      return court?.venueId === currentVenue.id &&
+             bookingDate >= weekAgo &&
+             bookingDate <= today;
+    });
+
+    const bookedHours = recentBookings.reduce((acc, b) => acc + b.duration, 0);
+
+    return Math.round((bookedHours / totalAvailableHours) * 100);
+  };
+
+  const occupancyRate = calculateOccupancyRate();
+
+  // Revenue by Sport (Real data)
   const revenueBySport = bookings.reduce((acc: any, booking) => {
     const court = courts.find(c => c.id === booking.courtId);
-    if (court) {
+    if (court && court.venueId === currentVenue.id) {
       acc[court.sport] = (acc[court.sport] || 0) + booking.totalPrice;
     }
     return acc;
   }, {});
-  
+
   const pieData = Object.keys(revenueBySport).map(key => ({
     name: key,
     value: revenueBySport[key]
   }));
 
-  // Activity Mock Data
-  const activityData = [
-    { name: 'Lun', bookings: 12 },
-    { name: 'Mar', bookings: 19 },
-    { name: 'Mié', bookings: 15 },
-    { name: 'Jue', bookings: 22 },
-    { name: 'Vie', bookings: 28 },
-    { name: 'Sáb', bookings: 32 },
-    { name: 'Dom', bookings: 25 },
-  ];
+  // Activity Data - Real calculation from bookings (last 7 days)
+  const calculateActivityData = () => {
+    const daysOfWeek = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+    const activityMap: { [key: string]: number } = {};
+
+    // Initialize all days with 0
+    daysOfWeek.forEach(day => activityMap[day] = 0);
+
+    // Count bookings by day of week (last 30 days for better data)
+    const today = new Date();
+    const thirtyDaysAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+    bookings.forEach(b => {
+      const bookingDate = new Date(b.date);
+      const court = courts.find(c => c.id === b.courtId);
+
+      if (court?.venueId === currentVenue.id && bookingDate >= thirtyDaysAgo) {
+        const dayName = daysOfWeek[bookingDate.getDay()];
+        activityMap[dayName]++;
+      }
+    });
+
+    // Return in order starting from Monday
+    return [
+      { name: 'Lun', bookings: activityMap['Lun'] },
+      { name: 'Mar', bookings: activityMap['Mar'] },
+      { name: 'Mié', bookings: activityMap['Mié'] },
+      { name: 'Jue', bookings: activityMap['Jue'] },
+      { name: 'Vie', bookings: activityMap['Vie'] },
+      { name: 'Sáb', bookings: activityMap['Sáb'] },
+      { name: 'Dom', bookings: activityMap['Dom'] },
+    ];
+  };
+
+  const activityData = calculateActivityData();
 
   const handleGenerateInsights = async () => {
     setIsLoadingAi(true);
@@ -63,7 +118,7 @@ export const Dashboard: React.FC = () => {
         <StatCard icon={DollarSign} label="Ingresos Totales" value={`$${totalRevenue.toLocaleString()}`} color="bg-indigo-500" />
         <StatCard icon={Calendar} label="Reservas Activas" value={activeBookings.toString()} color="bg-blue-500" />
         <StatCard icon={Users} label="Clientes Totales" value={clients.length.toString()} color="bg-emerald-500" />
-        <StatCard icon={TrendingUp} label="Tasa de Ocupación" value="78%" color="bg-rose-500" />
+        <StatCard icon={TrendingUp} label="Tasa de Ocupación" value={`${occupancyRate}%`} color="bg-rose-500" />
       </div>
 
       {/* AI Section */}

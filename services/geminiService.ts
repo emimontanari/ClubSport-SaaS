@@ -3,9 +3,9 @@ import { GoogleGenAI } from "@google/genai";
 import { Booking, Court } from "../types";
 
 const getAiClient = () => {
-  const apiKey = process.env.API_KEY;
+  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
   if (!apiKey) {
-    console.error("API Key is missing");
+    console.error("⚠️ Gemini API Key is missing. Add VITE_GEMINI_API_KEY to your .env file");
     return null;
   }
   return new GoogleGenAI({ apiKey });

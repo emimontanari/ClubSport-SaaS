@@ -41,13 +41,14 @@ export const CalendarPage: React.FC = () => {
   };
 
   const handleSlotClick = (courtId: string, time: number) => {
-    // Check if slot is occupied
-    const isOccupied = bookings.some(b => 
-      b.courtId === courtId && 
-      b.date === dateString && 
-      time >= b.startTime && 
-      time < (b.startTime + b.duration)
-    );
+    // Check if slot is occupied with proper range validation
+    const isOccupied = bookings.some(b => {
+      if (b.courtId !== courtId || b.date !== dateString) return false;
+
+      const bookingEnd = b.startTime + b.duration;
+      // Check if the clicked time falls within an existing booking
+      return time >= b.startTime && time < bookingEnd;
+    });
 
     if (!isOccupied) {
       setSelectedSlot({ courtId, time });
@@ -62,12 +63,42 @@ export const CalendarPage: React.FC = () => {
     const court = courts.find(c => c.id === selectedSlot.courtId);
     if (!court) return;
 
+    // Validate no conflicts with the selected duration
+    const newStart = selectedSlot.time;
+    const newEnd = selectedSlot.time + formData.duration;
+
+    const hasConflict = bookings.some(b => {
+      if (b.courtId !== selectedSlot.courtId || b.date !== dateString) return false;
+
+      const existingStart = b.startTime;
+      const existingEnd = b.startTime + b.duration;
+
+      // Check for any overlap between time ranges
+      return (
+        (newStart >= existingStart && newStart < existingEnd) ||  // New starts during existing
+        (newEnd > existingStart && newEnd <= existingEnd) ||      // New ends during existing
+        (newStart <= existingStart && newEnd >= existingEnd)      // New completely covers existing
+      );
+    });
+
+    if (hasConflict) {
+      alert('⚠️ Conflicto de horarios: Ya existe una reserva en este horario para esta cancha.');
+      return;
+    }
+
     // Calculate total
     let total = court.pricePerHour * formData.duration;
     // Add services
     formData.selectedServices.forEach(sId => {
         const svc = services.find(s => s.id === sId);
-        if (svc) total += svc.price;
+        if (svc) {
+          // Calculate service price based on unit
+          if (svc.unit === 'per_hour') {
+            total += svc.price * formData.duration;
+          } else {
+            total += svc.price;
+          }
+        }
     });
 
     addBooking({
@@ -82,6 +113,7 @@ export const CalendarPage: React.FC = () => {
       services: formData.selectedServices
     });
     setIsModalOpen(false);
+    setFormData({ clientId: '', duration: 1.5, status: BookingStatus.CONFIRMED, selectedServices: [] });
   };
 
   return (

@@ -1,5 +1,5 @@
 
-import React, { useState, useContext, createContext } from 'react';
+import React, { useState, useContext, createContext, useEffect } from 'react';
 import { HashRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { Dashboard } from './pages/Dashboard';
@@ -47,44 +47,89 @@ export interface AppContextType {
   courts: Court[];
   bookings: Booking[];
   addBooking: (b: Booking) => void;
+  updateBooking: (id: string, updates: Partial<Booking>) => void;
+  deleteBooking: (id: string) => void;
   clients: Client[];
   services: Service[];
   tournaments: Tournament[];
   matches: Match[];
+  updateMatch: (id: string, scoreA: number, scoreB: number) => void;
   classes: SchoolClass[];
 }
 
 const AppContext = createContext<AppContextType | null>(null);
 
 const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  // Load data from localStorage or use defaults
+  const loadFromStorage = <T,>(key: string, defaultValue: T): T => {
+    try {
+      const item = localStorage.getItem(key);
+      return item ? JSON.parse(item) : defaultValue;
+    } catch (error) {
+      console.error(`Error loading ${key} from localStorage:`, error);
+      return defaultValue;
+    }
+  };
+
   const [venues] = useState<Venue[]>(MOCK_VENUES);
   const [currentVenue, setCurrentVenue] = useState<Venue>(MOCK_VENUES[0]);
   const [courts] = useState<Court[]>(MOCK_COURTS);
-  const [bookings, setBookings] = useState<Booking[]>(MOCK_BOOKINGS);
+  const [bookings, setBookings] = useState<Booking[]>(() =>
+    loadFromStorage('clubsport_bookings', MOCK_BOOKINGS)
+  );
   const [clients] = useState<Client[]>(MOCK_CLIENTS);
   const [services] = useState<Service[]>(MOCK_SERVICES);
-  
+
   // New State
   const [tournaments] = useState<Tournament[]>(MOCK_TOURNAMENTS);
   const [matches] = useState<Match[]>(MOCK_MATCHES);
   const [classes] = useState<SchoolClass[]>(MOCK_CLASSES);
 
+  // Persist bookings to localStorage whenever they change
+  useEffect(() => {
+    try {
+      localStorage.setItem('clubsport_bookings', JSON.stringify(bookings));
+    } catch (error) {
+      console.error('Error saving bookings to localStorage:', error);
+    }
+  }, [bookings]);
+
   const addBooking = (booking: Booking) => {
     setBookings(prev => [...prev, booking]);
   };
 
+  const updateBooking = (id: string, updates: Partial<Booking>) => {
+    setBookings(prev =>
+      prev.map(b => (b.id === id ? { ...b, ...updates } : b))
+    );
+  };
+
+  const deleteBooking = (id: string) => {
+    setBookings(prev => prev.filter(b => b.id !== id));
+  };
+
+  const updateMatch = (id: string, scoreA: number, scoreB: number) => {
+    // Note: This would need state management for matches
+    // For now, we'll just log it as matches are read-only in current state
+    console.log(`Match ${id} updated: ${scoreA} - ${scoreB}`);
+    // TODO: Add matches state management when needed
+  };
+
   return (
-    <AppContext.Provider value={{ 
-      venues, 
-      currentVenue, 
-      setCurrentVenue, 
-      courts, 
-      bookings, 
-      addBooking, 
+    <AppContext.Provider value={{
+      venues,
+      currentVenue,
+      setCurrentVenue,
+      courts,
+      bookings,
+      addBooking,
+      updateBooking,
+      deleteBooking,
       clients,
       services,
       tournaments,
       matches,
+      updateMatch,
       classes
     }}>
       {children}
